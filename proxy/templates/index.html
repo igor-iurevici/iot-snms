@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SNMS Configuration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+      body {
+        background-color: #4c4c4c; /* Iron grey background */
+        color: #ffffff; /* White text color */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      
+      .container {
+        width: 400px;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        background-color: #333333;
+        color: #ffffff;
+      }
+      
+      .title-line {
+        width: 100%;
+        height: 1px;
+        background-color: #ffffff; /* White line color */
+        margin-bottom: 20px;
+      }
+      
+      .flash-messages {
+        margin-top: 20px;
+      }
+      
+      .flash-messages .list-group-item {
+        margin-bottom: 10px;
+      }
+      
+      /* Remove arrow from input number fields */
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      
+      /* Center the submit button */
+      .submit-btn {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .low {
+        color: green; /* Set the color for low values */
+      }
+
+      .medium {
+        color: yellow; /* Set the color for medium values */
+      }
+
+      .high {
+        color: red; /* Set the color for high values */
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">SNMS Configuration</h1>
+      <div class="title-line"></div> <!-- White line under the title -->
+      <form method="POST" action="/">
+        <div class="form-group">
+          <label for="sampling_rate"><b>Sampling Rate</b></label>
+          <input type="number" class="form-control" name="sampling_rate" id="sampling_rate" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="noise_threshold"><b>Noise Threshold</b></label>
+          <input type="number" class="form-control" name="noise_threshold" id="noise_threshold" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="alarm_level"><b>Alarm Level</b></label>
+          <input type="number" class="form-control" name="alarm_level" id="alarm_level" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="alarm_counter"><b>Alarm Counter</b></label>
+          <input type="number" class="form-control" name="alarm_counter" id="alarm_counter" required>
+        </div>
+        
+        <div class="submit-btn">
+          <button type="submit" class="btn btn-primary">Submit changes</button>
+        </div>
+      </form>
+      
+      <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="list-group">
+              {% for message in messages %}
+                {% if 'Invalid' in message %}
+                  <li class="list-group-item text-danger">{{ message }}</li> <!-- Red text color for error -->
+                {% else %}
+                  <li class="list-group-item text-success">{{ message }}</li> <!-- Green text color for success -->
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <!-- Sensor footer -->
+      <footer class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 text-left">
+              <p><b>Noise:  </b><span id="noise_value" class="{{ noise_class }}">{{ noise_value }}</span></p>
+            </div>
+            <div class="col-md-4 text-center">
+              <p style="margin-left: 1ch;"><b>Alarm:  </b><span id="alarm_flag" class="{{ alarm_class }}">{{ alarm_value }}</span></p>
+            </div>
+            <div class="col-md-4 text-right">
+              <p><b>RSSI:  </b><span id="rssi_value" class="{{ rssi_class }}">{{ rssi_value }}</span></p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

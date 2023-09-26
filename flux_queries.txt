@@ -1,0 +1,65 @@
+### TASK AGGREGATION ###
+
+option task = {name: "Alarm Aggregation", every: 10s}
+
+from(bucket: "snms")
+    |> range(start: -task.every)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "alarm")
+    |> filter(fn: (r) => r._field == 1)
+    |> aggregateWindow(every: 10s, fn: sum)
+    |> to(bucket: "snms_agg")
+
+
+option task = {name: "Noise Aggregation", every: 10s}
+
+from(bucket: "snms")
+    |> range(start: -task.every)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "noise")
+    |> aggregateWindow(every: 10s, fn: mean)
+    |> to(bucket: "snms_agg")
+
+
+option task = {name: "WiFi Aggregation", every: 10s}
+
+from(bucket: "snms")
+    |> range(start: -task.every)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "rssi")
+    |> aggregateWindow(every: 10s, fn: mean)
+    |> to(bucket: "snms_agg")
+
+
+
+### GRAFANA ###
+# Noise
+from(bucket: "snms_agg")
+    |> range(start: -12h)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "noise")
+
+# Noise Moving Average
+from(bucket: "snms_agg")
+    |> range(start: -12h)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "noise")
+    |> movingAverage(n: 10)
+
+# Forecasted
+from(bucket: "snms_agg")
+    |> range(start: -1h, stop: 20m)
+    |> filter(fn: (r) => r._measurement == "forecast")
+    |> filter(fn: (r) => r._field == "noise_yhat")
+
+# Alarm
+from(bucket: "snms_agg")
+    |> range(start: -1h)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "alarm")
+
+# WiFI
+from(bucket: "snms_agg")
+    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+    |> filter(fn: (r) => r._measurement == "sample")
+    |> filter(fn: (r) => r._field == "rssi")

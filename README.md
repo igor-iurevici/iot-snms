@@ -1,2 +1,2 @@
 # iot-snms
-A indoor Smart Noise Monitoring System :sound:
+Indoor Smart Noise Monitoring System :sound:

@@ -5,5 +5,5 @@ SMNS is an indoor noise monitoring system exploiting IoT devices (ESP32 microcon
 A Flask web page is available to set the system parameters. </br>
 Moreover [Prophet](https://facebook.github.io/prophet/), a time series forecasting procedures predicts near real-time noise values in the near future.
 
-### Documentation
+### More
 Check out the [report](https://github.com/igor-iurevici/iot-snms/blob/main/report.pdf) and [presentation](https://github.com/igor-iurevici/iot-snms/blob/main/presentation.pdf) for further details.
